@@ -131,6 +131,19 @@ public final class GetCountryInfoQuery: GraphQLQuery {
       country(code: $code) {
         __typename
         name
+        native
+        phone
+        currency
+        languages {
+          __typename
+          name
+          native
+        }
+        continent {
+          __typename
+          code
+          name
+        }
         capital
         emoji
         states {
@@ -188,6 +201,11 @@ public final class GetCountryInfoQuery: GraphQLQuery {
         return [
           GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
           GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          GraphQLField("native", type: .nonNull(.scalar(String.self))),
+          GraphQLField("phone", type: .nonNull(.scalar(String.self))),
+          GraphQLField("currency", type: .scalar(String.self)),
+          GraphQLField("languages", type: .nonNull(.list(.nonNull(.object(Language.selections))))),
+          GraphQLField("continent", type: .nonNull(.object(Continent.selections))),
           GraphQLField("capital", type: .scalar(String.self)),
           GraphQLField("emoji", type: .nonNull(.scalar(String.self))),
           GraphQLField("states", type: .nonNull(.list(.nonNull(.object(State.selections))))),
@@ -200,8 +218,8 @@ public final class GetCountryInfoQuery: GraphQLQuery {
         self.resultMap = unsafeResultMap
       }
 
-      public init(name: String, capital: String? = nil, emoji: String, states: [State]) {
-        self.init(unsafeResultMap: ["__typename": "Country", "name": name, "capital": capital, "emoji": emoji, "states": states.map { (value: State) -> ResultMap in value.resultMap }])
+      public init(name: String, native: String, phone: String, currency: String? = nil, languages: [Language], continent: Continent, capital: String? = nil, emoji: String, states: [State]) {
+        self.init(unsafeResultMap: ["__typename": "Country", "name": name, "native": native, "phone": phone, "currency": currency, "languages": languages.map { (value: Language) -> ResultMap in value.resultMap }, "continent": continent.resultMap, "capital": capital, "emoji": emoji, "states": states.map { (value: State) -> ResultMap in value.resultMap }])
       }
 
       public var __typename: String {
@@ -219,6 +237,51 @@ public final class GetCountryInfoQuery: GraphQLQuery {
         }
         set {
           resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+
+      public var native: String {
+        get {
+          return resultMap["native"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "native")
+        }
+      }
+
+      public var phone: String {
+        get {
+          return resultMap["phone"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "phone")
+        }
+      }
+
+      public var currency: String? {
+        get {
+          return resultMap["currency"] as? String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "currency")
+        }
+      }
+
+      public var languages: [Language] {
+        get {
+          return (resultMap["languages"] as! [ResultMap]).map { (value: ResultMap) -> Language in Language(unsafeResultMap: value) }
+        }
+        set {
+          resultMap.updateValue(newValue.map { (value: Language) -> ResultMap in value.resultMap }, forKey: "languages")
+        }
+      }
+
+      public var continent: Continent {
+        get {
+          return Continent(unsafeResultMap: resultMap["continent"]! as! ResultMap)
+        }
+        set {
+          resultMap.updateValue(newValue.resultMap, forKey: "continent")
         }
       }
 
@@ -246,6 +309,104 @@ public final class GetCountryInfoQuery: GraphQLQuery {
         }
         set {
           resultMap.updateValue(newValue.map { (value: State) -> ResultMap in value.resultMap }, forKey: "states")
+        }
+      }
+
+      public struct Language: GraphQLSelectionSet {
+        public static let possibleTypes: [String] = ["Language"]
+
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+            GraphQLField("name", type: .scalar(String.self)),
+            GraphQLField("native", type: .scalar(String.self)),
+          ]
+        }
+
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        public init(name: String? = nil, native: String? = nil) {
+          self.init(unsafeResultMap: ["__typename": "Language", "name": name, "native": native])
+        }
+
+        public var __typename: String {
+          get {
+            return resultMap["__typename"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "__typename")
+          }
+        }
+
+        public var name: String? {
+          get {
+            return resultMap["name"] as? String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "name")
+          }
+        }
+
+        public var native: String? {
+          get {
+            return resultMap["native"] as? String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "native")
+          }
+        }
+      }
+
+      public struct Continent: GraphQLSelectionSet {
+        public static let possibleTypes: [String] = ["Continent"]
+
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+            GraphQLField("code", type: .nonNull(.scalar(GraphQLID.self))),
+            GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          ]
+        }
+
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        public init(code: GraphQLID, name: String) {
+          self.init(unsafeResultMap: ["__typename": "Continent", "code": code, "name": name])
+        }
+
+        public var __typename: String {
+          get {
+            return resultMap["__typename"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "__typename")
+          }
+        }
+
+        public var code: GraphQLID {
+          get {
+            return resultMap["code"]! as! GraphQLID
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "code")
+          }
+        }
+
+        public var name: String {
+          get {
+            return resultMap["name"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "name")
+          }
         }
       }
 

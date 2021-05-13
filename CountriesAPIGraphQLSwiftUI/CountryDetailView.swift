@@ -13,8 +13,21 @@ struct CountryDetailView: View {
     
     var body: some View {
         VStack {
-            Text(countryInfo?.name ?? "")
-            Text(countryInfo?.capital ?? "")
+            Text(countryInfo?.name ?? "n/a")
+                .bold()
+                .font(.title)
+            Text("(\(countryInfo?.native ?? "n/a"))")
+            Text(countryInfo?.capital ?? "n/a")
+                .padding()
+            List(countryInfo?.languages ?? [], id: \.name) { language in
+                Text("\(language.name ?? ""), (\(language.native ?? ""))")
+            }
+            
+            Text("\(countryInfo?.continent.name ?? "n/a"), \(countryInfo?.continent.code ?? "n/a")")
+                .foregroundColor(.secondary)
+            Text("Currency: \(countryInfo?.currency ?? "n/a")")
+            Text("Phone: \(countryInfo?.phone ?? "n/a")")
+            
             List(countryInfo?.states ?? [], id: \.name) { state in
                 Text(state.name)
             }

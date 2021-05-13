@@ -10,6 +10,17 @@ query GetAllCountries {
 query GetCountryInfo($code: ID!) {
     country(code: $code) {
         name
+        native
+        phone
+        currency
+        languages {
+            name
+            native
+        }
+        continent {
+            code
+            name
+        }
         capital
         emoji
         states {
