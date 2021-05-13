@@ -8,9 +8,42 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var countries: [GetAllCountriesQuery.Data.Country] = []
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView {
+            VStack {
+                List(countries, id: \.code) { country in
+                    HStack {
+                        Text(country.emoji)
+                        Spacer()
+                        VStack {
+                            Text(country.name)
+                            if let capital = country.capital {
+                                Text(capital)
+                            }
+                        }
+                        Spacer()
+                        Text(country.code)
+                    }
+                }.listStyle(PlainListStyle())
+            }
+            .onAppear() {
+                Network.shared.apollo.fetch(query: GetAllCountriesQuery()) { result in
+                    switch result {
+                    case .success(let graphQLResult):
+                        if let countries = graphQLResult.data?.countries {
+                            DispatchQueue.main.async {
+                                self.countries = countries
+                            }
+                        }
+                    case .failure(let error):
+                        print(error)
+                    }
+                }
+            }
+            .navigationTitle("Coutries")
+        }
     }
 }
 
