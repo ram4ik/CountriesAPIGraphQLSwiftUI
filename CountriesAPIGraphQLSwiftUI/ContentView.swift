@@ -14,17 +14,19 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 List(countries, id: \.code) { country in
-                    HStack {
-                        Text(country.emoji)
-                        Spacer()
-                        VStack {
-                            Text(country.name)
-                            if let capital = country.capital {
-                                Text(capital)
+                    NavigationLink(destination: CountryDetailView(country: country)) {
+                        HStack {
+                            Text(country.emoji)
+                            Spacer()
+                            VStack {
+                                Text(country.name)
+                                if let capital = country.capital {
+                                    Text(capital)
+                                }
                             }
+                            Spacer()
+                            Text(country.code)
                         }
-                        Spacer()
-                        Text(country.code)
                     }
                 }.listStyle(PlainListStyle())
             }
@@ -42,7 +44,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("Coutries")
+            .navigationTitle("Countries")
         }
     }
 }
